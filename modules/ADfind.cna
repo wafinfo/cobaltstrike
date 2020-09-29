@@ -1,0 +1,87 @@
+menu "信息收集" {
+
+        item "常用信息"{
+            $bid = $1['@'];
+            $dialog = dialog("常用信息",%(bid => $bid), &main);
+            dialog_description($dialog, "AdFind用于查询域内信息");
+            drow_checkbox($dialog, "uploadADfind", "上传AdFind(未上传需勾选)", "");
+            drow_checkbox($dialog, "delADfind", "删除AdFind(默认路径C:\\Windows\\Temp\\)", "");
+            drow_checkbox($dialog, "dc_list", "列出域控制器名称", "");
+            drow_checkbox($dialog, "computersactive", "查询当前域中在线的计算机", "");
+            drow_checkbox($dialog, "operating_System", "查询当前域中在线的计算机(只显示名称和操作系统)", "");
+            drow_checkbox($dialog, "computers", "查询当前域中所有计算机", "");
+            drow_checkbox($dialog, "operating_Systems", "查询当前域中所有计算机(只显示名称和操作系统)", "");
+            drow_checkbox($dialog, "names", "查询域内所有用户", "");
+            drow_checkbox($dialog, "gpo", "查询所有GPO", "");
+
+            dbutton_action($dialog, "运行");
+            dialog_show($dialog);
+        }
+
+      sub main{
+    foreach $func (keys($3)){
+        if ($3[$func] eq 'true'){
+            eval($func.'();');
+        }
+    }
+
+}
+      sub dc_list{
+      btask($bid, "####################", "");
+      btask($bid, "## 列出域控制器名称 ##", "");
+      btask($bid, "####################", "");
+      bshell($bid, "AdFind.exe -sc dclist");
+      }
+      sub computersactive{
+      btask($bid, "##############################", "");
+      btask($bid, "##  查询当前域中在线的计算机   ##", "");
+      btask($bid, "##############################", "");
+      bshell($bid, "AdFind.exe -sc computers_active");
+      }  
+
+      sub operating_System{
+      btask($bid, "###############################################", "");
+      btask($bid, "##  查询当前域中在线的计算机(只显示名称和操作系统) ##", "");
+      btask($bid, "###############################################", "");
+      bshell($bid, "AdFind.exe -sc computers_active name operatingSystem");
+      }
+      sub computers{
+      btask($bid, "####################", "");
+      btask($bid, "##  查询当前域中所有计算机  ##", "");
+      btask($bid, "####################", "");
+      bshell($bid, "AdFind.exe -f "objectcategory=computer"");
+      }  
+      sub operating_Systems{
+      btask($bid, "##############################################", "");
+      btask($bid, "##  查询当前域中所有计算机(只显示名称和操作系统)  ##", "");
+      btask($bid, "##############################################", "");
+      bshell($bid, "AdFind.exe -f "objectcategory=computer" name operatingSystem");
+      }  
+      sub names{
+      btask($bid, "####################", "");
+      btask($bid, "## 查询域内所有用户 ##", "");
+      btask($bid, "####################", "");
+      bshell($bid, "AdFind.exe -users name");
+      }  
+      sub gpo{
+      btask($bid, "####################", "");
+      btask($bid, "##  查询所有GPO   ##", "");
+      btask($bid, "####################", "");
+      bshell($bid, "AdFind.exe -sc gpodmp");
+      }
+      sub uploadADfind{
+      btask($bid, "####################", "");
+      btask($bid, "## 上传ADfind工具  ##", "");
+      btask($bid, "####################", "");
+      bcd($bid, "C:\\Windows\\Temp\\");
+      bupload($bid, script_resource("/script/AdFind.exe"));
+      }   
+      sub delADfind{
+      btask($bid, "####################", "");
+      btask($bid, "##  删除ADfind工具 ##", "");
+      btask($bid, "####################", "");
+      bshell($bid, "del /f /s /q AdFind.exe");
+      }   
+
+}
+

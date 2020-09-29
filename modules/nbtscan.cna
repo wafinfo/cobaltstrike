@@ -1,0 +1,49 @@
+	menu "nbtscan" {
+			item "upload nbtscan" {
+				$bid = $1;
+				$dialog = dialog("上传nbtscan", %(UploadPath => "C:\\Windows\\Temp\\", bid => $bid), &nbtscan);
+                dialog_description($dialog, "linux和windows通用");
+				drow_text($dialog, "UploadPath",  "上传路径: "); 	
+				dbutton_action($dialog, "上传");
+				dialog_show($dialog);
+        }
+sub nbtscan {
+
+    bcd($bid, $3['UploadPath']);
+    if (-isssh $bid) {
+        bupload($bid, script_resource("/script/nbtscan"));
+    }else{
+        bupload($bid, script_resource("/script/nbtscan.exe"));
+    }
+}
+
+    item "运行nbtscan"{
+                    $bid = $1['@'];
+                    $Dialog = dialog("运行nbtscan",%(ip => "127.0.0.1",bid => $bid),&nbtscan_run);
+                    dialog_description($Dialog, "SHARING：该主机存在正在运行的文件和打印共享服务 DC：该机器可能是域控制器 ?：没有识别处该机器的NetBIOS资源");
+                    drow_text($Dialog, "ip", "ip: ");
+                    dbutton_action($Dialog, "运行");
+                    dialog_show($Dialog);
+                }
+
+sub nbtscan_run{
+    local('$Name');
+    $Name = $3['ip'];
+    if (-isssh $bid){
+    bshell($bid, "chmod +x nbtscan && ./nbtscan  -n $Name");
+    }else{
+    bshell($bid, "nbtscan.exe  $Name");
+    }	
+}
+
+        	item "删除nbtscan"{
+        	local('$bid');
+        	foreach $bid ($1){
+                if (-isssh $bid){
+                bshell($1, "find / -name "nbtscan" | xargs rm -rf");
+                }else{
+                bshell($1, "del /f /s /q nbtscan.exe");
+                }
+        	}
+		}
+}

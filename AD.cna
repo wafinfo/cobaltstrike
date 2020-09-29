@@ -1,0 +1,15 @@
+popup beacon_bottom {
+    menu "后渗透"{
+		include(script_resource("modules/FindADUser.cna"));
+		include(script_resource("modules/ADfind.cna"));
+		include(script_resource("modules/mimikatz.cna"));
+		include(script_resource("modules/krbtgtHash.cna"));
+		include(script_resource("modules/Adduser.cna"));
+		include(script_resource("modules/SilverTickets.cna"));
+		include(script_resource("modules/dumphash.cna"));
+		include(script_resource("modules/lsadump.cna"));
+		include(script_resource("modules/BrowserGhost.cna"));
+		include(script_resource("modules/nbtscan.cna"));
+		include(script_resource("modules/Everything.cna"));
+    }
+}

